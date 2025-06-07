@@ -1,10 +1,16 @@
 package com.lucasgiavaroti.usuario.business;
 
 import com.lucasgiavaroti.usuario.business.converter.UsuarioConverter;
+import com.lucasgiavaroti.usuario.business.dto.EnderecoDTO;
+import com.lucasgiavaroti.usuario.business.dto.TelefoneDTO;
 import com.lucasgiavaroti.usuario.business.dto.UsuarioDTO;
+import com.lucasgiavaroti.usuario.infrastructure.entity.Endereco;
+import com.lucasgiavaroti.usuario.infrastructure.entity.Telefone;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Usuario;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.ConflictException;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.NotFoundException;
+import com.lucasgiavaroti.usuario.infrastructure.repository.EnderecoRepository;
+import com.lucasgiavaroti.usuario.infrastructure.repository.TelefoneRepository;
 import com.lucasgiavaroti.usuario.infrastructure.repository.UsuarioRepository;
 import com.lucasgiavaroti.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +26,9 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioConverter usuarioConverter;
+
+    private final EnderecoRepository enderecoRepository;
+    private final TelefoneRepository telefoneRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -57,6 +66,24 @@ public class UsuarioService {
         Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
 
         return usuarioConverter.toUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    public EnderecoDTO atualizaEndereco(Long id, EnderecoDTO dto){
+
+        Endereco enderecoEntity = enderecoRepository.findById(id).orElseThrow(() -> new NotFoundException("Endereço com esse id não encontrado"));
+
+        Endereco endereco = usuarioConverter.updateEndereco(dto, enderecoEntity);
+
+        return usuarioConverter.toEnderecoDTO(enderecoRepository.save(endereco));
+    }
+
+    public TelefoneDTO atualizaTelefone(Long id, TelefoneDTO dto){
+
+        Telefone telefoneEntity = telefoneRepository.findById(id).orElseThrow(() -> new NotFoundException("Telefone com esse id não encontrado") );
+
+        Telefone telefone = usuarioConverter.updateTelefone(dto, telefoneEntity);
+
+        return usuarioConverter.toTelefoneDTO(telefoneRepository.save(telefone));
     }
 
     public void emailExiste(String email) {
