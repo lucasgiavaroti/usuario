@@ -1,7 +1,9 @@
 package com.lucasgiavaroti.usuario.controller;
 
 import com.lucasgiavaroti.usuario.business.UsuarioService;
+import com.lucasgiavaroti.usuario.business.dto.EnderecoDTO;
 import com.lucasgiavaroti.usuario.business.dto.LoginDTO;
+import com.lucasgiavaroti.usuario.business.dto.TelefoneDTO;
 import com.lucasgiavaroti.usuario.business.dto.UsuarioDTO;
 import com.lucasgiavaroti.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,21 @@ public class UsuarioController {
     public ResponseEntity<Void> deletaUsuarioPorEmail(@PathVariable("email") String email) {
         usuarioService.deletarUsuarioPorEmail(email);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<UsuarioDTO> atualizaDadosUsuario(@RequestBody UsuarioDTO dto, @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(token, dto));
+    }
+
+    @PutMapping("/endereco")
+    public ResponseEntity<EnderecoDTO> atualizaEnderecoUsuario(@RequestBody EnderecoDTO dto, @RequestParam Long id){
+        return ResponseEntity.ok(usuarioService.atualizaEndereco(id, dto));
+    }
+
+    @PutMapping("/telefone")
+    public ResponseEntity<TelefoneDTO> atualizaTelefoneUsuario(@RequestBody TelefoneDTO dto, @RequestParam Long id){
+        return ResponseEntity.ok(usuarioService.atualizaTelefone(id, dto));
     }
 
 }

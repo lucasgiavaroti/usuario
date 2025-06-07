@@ -71,6 +71,7 @@ public class UsuarioConverter {
 
     public EnderecoDTO toEnderecoDTO(Endereco endereco){
         return EnderecoDTO.builder()
+                .id(endereco.getId())
                 .bairro(endereco.getBairro())
                 .cep(endereco.getCep())
                 .cidade(endereco.getCidade())
@@ -87,8 +88,40 @@ public class UsuarioConverter {
 
     public TelefoneDTO toTelefoneDTO(Telefone telefone){
         return TelefoneDTO.builder()
+                .id(telefone.getId())
                 .ddd(telefone.getDdd())
                 .numero(telefone.getNumero())
+                .build();
+    }
+
+    public Usuario updateUsuario(UsuarioDTO dto, Usuario usuario ){
+        return Usuario.builder()
+                .nome(dto.getNome() != null ? dto.getNome() : usuario.getNome())
+                .id(usuario.getId())
+                .senha(usuario.getSenha() != null ? dto.getSenha() : usuario.getSenha())
+                .email(usuario.getEmail() != null ? usuario.getEmail() : dto.getEmail())
+                .telefones(usuario.getTelefones()) // não alteramos telefones aqui
+                .enderecos(usuario.getEnderecos()) // não alteramos enderecos aqui
+                .build();
+    }
+
+    public Endereco updateEndereco(EnderecoDTO dto, Endereco endereco){
+        return Endereco.builder()
+                .id(endereco.getId())
+                .cep(dto.getCep() != null ? dto.getCep() : endereco.getCep())
+                .rua(dto.getRua() != null ? dto.getRua() : endereco.getRua())
+                .bairro(dto.getBairro() != null ? dto.getBairro() : endereco.getBairro())
+                .numero(dto.getNumero() != null ? dto.getNumero() : endereco.getNumero())
+                .cidade(dto.getCidade() != null ? dto.getCidade() : endereco.getCidade())
+                .estado(dto.getEstado() != null ? dto.getEstado() : endereco.getEstado())
+                .complemento(dto.getComplemento() != null ? dto.getComplemento() : endereco.getComplemento())
+                .build();
+    }
+    public Telefone updateTelefone(TelefoneDTO dto, Telefone telefone){
+        return Telefone.builder()
+                .id(telefone.getId())
+                .numero(dto.getNumero() != null ? dto.getNumero() : telefone.getNumero())
+                .ddd(dto.getDdd() != null ? dto.getDdd() : telefone.getDdd())
                 .build();
     }
 
