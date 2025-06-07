@@ -92,4 +92,15 @@ public class UsuarioConverter {
                 .build();
     }
 
+    public Usuario updateUsuario(UsuarioDTO dto, Usuario usuario ){
+        return Usuario.builder()
+                .nome(dto.getNome() != null ? dto.getNome() : usuario.getNome())
+                .id(usuario.getId())
+                .senha(usuario.getSenha() != null ? dto.getSenha() : usuario.getSenha())
+                .email(usuario.getEmail() != null ? usuario.getEmail() : dto.getEmail())
+                .telefones(usuario.getTelefones()) // não alteramos telefones aqui
+                .enderecos(usuario.getEnderecos()) // não alteramos enderecos aqui
+                .build();
+    }
+
 }
