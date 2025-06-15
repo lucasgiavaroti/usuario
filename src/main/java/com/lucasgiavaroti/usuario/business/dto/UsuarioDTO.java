@@ -1,7 +1,5 @@
 package com.lucasgiavaroti.usuario.business.dto;
 
-import com.lucasgiavaroti.usuario.infrastructure.entity.Endereco;
-import com.lucasgiavaroti.usuario.infrastructure.entity.Telefone;
 import lombok.*;
 
 import java.util.List;
