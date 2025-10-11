@@ -1,10 +1,10 @@
 package com.lucasgiavaroti.usuario.controller;
 
 import com.lucasgiavaroti.usuario.business.UsuarioService;
-import com.lucasgiavaroti.usuario.business.dto.EnderecoDTO;
-import com.lucasgiavaroti.usuario.business.dto.LoginDTO;
-import com.lucasgiavaroti.usuario.business.dto.TelefoneDTO;
-import com.lucasgiavaroti.usuario.business.dto.UsuarioDTO;
+import com.lucasgiavaroti.usuario.business.dto.EnderecoRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.LoginRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.TelefoneRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.UsuarioRecordDTO;
 import com.lucasgiavaroti.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,23 +23,23 @@ public class UsuarioController {
     private final JwtUtil jwtUtil;
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> salvarUsuario(@RequestBody UsuarioDTO dto){
+    public ResponseEntity<UsuarioRecordDTO> salvarUsuario(@RequestBody UsuarioRecordDTO dto){
         return ResponseEntity.ok(usuarioService.salvaUsuario(dto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDTO> login (@RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<LoginRecordDTO> login (@RequestBody UsuarioRecordDTO usuarioDTO) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha())
+                new UsernamePasswordAuthenticationToken(usuarioDTO.email(), usuarioDTO.senha())
         );
 
-        return  ResponseEntity.ok(new LoginDTO("Bearer " + jwtUtil.generateToken(authentication.getName())));
+        return  ResponseEntity.ok(new LoginRecordDTO("Bearer " + jwtUtil.generateToken(authentication.getName())));
 
     }
 
     @GetMapping
-    public ResponseEntity<UsuarioDTO> buscaUsuarioPorEmail(@RequestParam("email") String email) {
+    public ResponseEntity<UsuarioRecordDTO> buscaUsuarioPorEmail(@RequestParam("email") String email) {
         return ResponseEntity.ok(usuarioService.buscaUsuarioPorEmail(email));
     }
 
@@ -50,27 +50,27 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<UsuarioDTO> atualizaDadosUsuario(@RequestBody UsuarioDTO dto, @RequestHeader("Authorization") String token){
+    public ResponseEntity<UsuarioRecordDTO> atualizaDadosUsuario(@RequestBody UsuarioRecordDTO dto, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok(usuarioService.atualizaDadosUsuario(token, dto));
     }
 
     @PutMapping("/endereco")
-    public ResponseEntity<EnderecoDTO> atualizaEnderecoUsuario(@RequestBody EnderecoDTO dto, @RequestParam Long id){
+    public ResponseEntity<EnderecoRecordDTO> atualizaEnderecoUsuario(@RequestBody EnderecoRecordDTO dto, @RequestParam Long id){
         return ResponseEntity.ok(usuarioService.atualizaEndereco(id, dto));
     }
 
     @PutMapping("/telefone")
-    public ResponseEntity<TelefoneDTO> atualizaTelefoneUsuario(@RequestBody TelefoneDTO dto, @RequestParam Long id){
+    public ResponseEntity<TelefoneRecordDTO> atualizaTelefoneUsuario(@RequestBody TelefoneRecordDTO dto, @RequestParam Long id){
         return ResponseEntity.ok(usuarioService.atualizaTelefone(id, dto));
     }
 
     @PostMapping("/endereco")
-    public ResponseEntity<EnderecoDTO> cadastraEndereco(@RequestBody EnderecoDTO dto, @RequestHeader("Authorization") String token){
+    public ResponseEntity<EnderecoRecordDTO> cadastraEndereco(@RequestBody EnderecoRecordDTO dto, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok(usuarioService.cadastraEndereco(token, dto));
     }
 
     @PostMapping("/telefone")
-    public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO dto, @RequestHeader("Authorization") String token){
+    public ResponseEntity<TelefoneRecordDTO> cadastraTelefone(@RequestBody TelefoneRecordDTO dto, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok(usuarioService.cadastraTelefone(token, dto));
     }
 
