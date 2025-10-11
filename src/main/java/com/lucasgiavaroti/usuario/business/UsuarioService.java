@@ -1,9 +1,9 @@
 package com.lucasgiavaroti.usuario.business;
 
 import com.lucasgiavaroti.usuario.business.converter.UsuarioConverter;
-import com.lucasgiavaroti.usuario.business.dto.EnderecoDTO;
-import com.lucasgiavaroti.usuario.business.dto.TelefoneDTO;
-import com.lucasgiavaroti.usuario.business.dto.UsuarioDTO;
+import com.lucasgiavaroti.usuario.business.dto.EnderecoRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.TelefoneRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.UsuarioRecordDTO;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Endereco;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Telefone;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Usuario;
@@ -31,17 +31,17 @@ public class UsuarioService {
 
     private final JwtUtil jwtUtil;
 
-    public UsuarioDTO salvaUsuario(UsuarioDTO dto){
-        emailExiste(dto.getEmail());
+    public UsuarioRecordDTO salvaUsuario(UsuarioRecordDTO dto){
+        emailExiste(dto.email());
 
-        dto.setSenha(passwordEncoder.encode(dto.getSenha()));
+        UsuarioRecordDTO usuarioRecord = new UsuarioRecordDTO(dto.nome(), dto.email(), passwordEncoder.encode(dto.senha()), dto.endereco(), dto.telefone());
 
-        Usuario usuarioSaved = usuarioConverter.toUsuario(dto);
-        return usuarioConverter.toUsuarioDTO( usuarioRepository.save(usuarioSaved));
+        Usuario usuarioSaved = usuarioConverter.toUsuario(usuarioRecord);
+        return usuarioConverter.toUsuarioRecordDTO( usuarioRepository.save(usuarioSaved));
     }
 
-    public UsuarioDTO buscaUsuarioPorEmail(String email){
-        return usuarioConverter.toUsuarioDTO( usuarioRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com esse e-mail")));
+    public UsuarioRecordDTO buscaUsuarioPorEmail(String email){
+        return usuarioConverter.toUsuarioRecordDTO( usuarioRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com esse e-mail")));
     }
 
     public void deletarUsuarioPorEmail(String email){
@@ -49,41 +49,43 @@ public class UsuarioService {
         usuarioRepository.deleteByEmail(email);
     }
 
-    public UsuarioDTO atualizaDadosUsuario(String token, UsuarioDTO dto){
+    public UsuarioRecordDTO atualizaDadosUsuario(String token, UsuarioRecordDTO dto){
         // busca e-mail do usuario pelo jwt (tirar obrigatoriedade do e-mail)
         String email = jwtUtil.extractEmail(token.substring(7));
 
         // criptografia de senha somente se o usuário tiver passado a senha, para não arriscar criptografar a mesma senha do banco novamente
-        dto.setSenha(dto.getSenha() != null ? passwordEncoder.encode(dto.getSenha()) : null);
+        String senha = dto.senha() != null ? passwordEncoder.encode(dto.senha()) : null;
+
+        UsuarioRecordDTO usuarioRecord = new UsuarioRecordDTO(dto.nome(), dto.email(), senha, dto.endereco(), dto.telefone());
 
         // busca os dados do usuario no banco de dados
         Usuario usuarioEntity = usuarioRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Email do token não localizado"));
 
         // mescla os dados que recebemos do DTO com os dados já existentes no banco de dados
-        Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
+        Usuario usuario = usuarioConverter.updateUsuario(usuarioRecord, usuarioEntity);
 
-        return usuarioConverter.toUsuarioDTO(usuarioRepository.save(usuario));
+        return usuarioConverter.toUsuarioRecordDTO(usuarioRepository.save(usuario));
     }
 
-    public EnderecoDTO atualizaEndereco(Long id, EnderecoDTO dto){
+    public EnderecoRecordDTO atualizaEndereco(Long id, EnderecoRecordDTO dto){
 
         Endereco enderecoEntity = enderecoRepository.findById(id).orElseThrow(() -> new NotFoundException("Endereço com esse id não encontrado"));
 
         Endereco endereco = usuarioConverter.updateEndereco(dto, enderecoEntity);
 
-        return usuarioConverter.toEnderecoDTO(enderecoRepository.save(endereco));
+        return usuarioConverter.toEnderecoRecordDTO(enderecoRepository.save(endereco));
     }
 
-    public TelefoneDTO atualizaTelefone(Long id, TelefoneDTO dto){
+    public TelefoneRecordDTO atualizaTelefone(Long id, TelefoneRecordDTO dto){
 
         Telefone telefoneEntity = telefoneRepository.findById(id).orElseThrow(() -> new NotFoundException("Telefone com esse id não encontrado") );
 
         Telefone telefone = usuarioConverter.updateTelefone(dto, telefoneEntity);
 
-        return usuarioConverter.toTelefoneDTO(telefoneRepository.save(telefone));
+        return usuarioConverter.toTelefoneRecordDTO(telefoneRepository.save(telefone));
     }
 
-    public EnderecoDTO cadastraEndereco(String token, EnderecoDTO dto){
+    public EnderecoRecordDTO cadastraEndereco(String token, EnderecoRecordDTO dto){
 
         String email = jwtUtil.extractEmail(token.substring(7));
 
@@ -91,11 +93,11 @@ public class UsuarioService {
 
         Endereco endereco = usuarioConverter.toEnderecoEntity(dto, usuario.getId());
 
-        return usuarioConverter.toEnderecoDTO(enderecoRepository.save(endereco));
+        return usuarioConverter.toEnderecoRecordDTO(enderecoRepository.save(endereco));
 
     }
 
-    public TelefoneDTO cadastraTelefone(String token, TelefoneDTO dto){
+    public TelefoneRecordDTO cadastraTelefone(String token, TelefoneRecordDTO dto){
 
         String email = jwtUtil.extractEmail(token.substring(7));
 
@@ -103,7 +105,7 @@ public class UsuarioService {
 
         Telefone telefone = usuarioConverter.toTelefoneEntity(dto, usuario.getId());
 
-        return  usuarioConverter.toTelefoneDTO(telefoneRepository.save(telefone));
+        return  usuarioConverter.toTelefoneRecordDTO(telefoneRepository.save(telefone));
 
     }
 
