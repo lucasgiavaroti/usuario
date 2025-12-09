@@ -1,10 +1,8 @@
 package com.lucasgiavaroti.usuario.controller;
 
 import com.lucasgiavaroti.usuario.business.UsuarioService;
-import com.lucasgiavaroti.usuario.business.dto.EnderecoRecordDTO;
-import com.lucasgiavaroti.usuario.business.dto.LoginRecordDTO;
-import com.lucasgiavaroti.usuario.business.dto.TelefoneRecordDTO;
-import com.lucasgiavaroti.usuario.business.dto.UsuarioRecordDTO;
+import com.lucasgiavaroti.usuario.business.ViaCepService;
+import com.lucasgiavaroti.usuario.business.dto.*;
 import com.lucasgiavaroti.usuario.infrastructure.security.JwtUtil;
 import com.lucasgiavaroti.usuario.infrastructure.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final ViaCepService viaCepService;
+
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
@@ -107,6 +107,15 @@ public class UsuarioController {
     @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME)
     public ResponseEntity<EnderecoRecordDTO> cadastraEndereco(@RequestBody EnderecoRecordDTO dto, @RequestHeader("Authorization") String token){
         return ResponseEntity.ok(usuarioService.cadastraEndereco(token, dto));
+    }
+
+    @GetMapping("/endereco/{cep}")
+    @Operation(summary = "Buscar dados do endereço",description = "Busca os dados de um endereço dado um CEP")
+    @ApiResponse(responseCode = "200", description = "Endereço encontrado com sucesso")
+    @ApiResponse(responseCode = "400", description = "CEP mal-formatado")
+    @ApiResponse(responseCode = "500", description = "Erro interno de servidor")
+    public ResponseEntity<ViaCepDTO> buscaEnderecoPorCep(@PathVariable("cep") String cep){
+        return ResponseEntity.ok(viaCepService.buscaEnderecoPorCep(cep));
     }
 
     @PostMapping("/telefone")
