@@ -1,8 +1,14 @@
+FROM gradle:9.2.1-jdk17 AS BUILD
+
+WORKDIR /app
+COPY . .
+RUN gradle build --no-daemon
+
 FROM eclipse-temurin:17
 
 WORKDIR /app
 
-COPY build/libs/usuario-0.0.1-SNAPSHOT.jar /app/usuario.jar
+COPY --from=build /app/build/libs/*.jar /app/usuario.jar
 
 EXPOSE 8080
 
