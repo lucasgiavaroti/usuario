@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.lucasgiavaroti.usuario.infrastructure.exceptions.BusinessException;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.dto.ErrorResponseDTO;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -84,7 +85,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             return objectMapper.writeValueAsString(errorResponseDTO);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(e.getMessage());
         }
 
     }

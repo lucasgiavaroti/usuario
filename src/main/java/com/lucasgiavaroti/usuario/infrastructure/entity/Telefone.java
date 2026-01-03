@@ -3,6 +3,8 @@ package com.lucasgiavaroti.usuario.infrastructure.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,7 +12,9 @@ import lombok.*;
 @Entity
 @Table(name = "telefone")
 @Builder
-public class Telefone {
+public class Telefone implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +27,6 @@ public class Telefone {
     private String ddd;
 
     @Column(name = "id_usuario")
-    private Long usuario_id;
+    private Long usuarioId;
 
 }

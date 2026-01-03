@@ -1,9 +1,7 @@
 package com.lucasgiavaroti.usuario.controller;
 
-import com.lucasgiavaroti.usuario.infrastructure.exceptions.ConflictException;
+import com.lucasgiavaroti.usuario.infrastructure.exceptions.*;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.IllegalArgumentException;
-import com.lucasgiavaroti.usuario.infrastructure.exceptions.NotFoundException;
-import com.lucasgiavaroti.usuario.infrastructure.exceptions.UnauthorizedException;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -36,11 +34,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(buildErrorResponse(HttpStatus.BAD_REQUEST.value(),  ex.getMessage(), "Bad Request", request.getRequestURI()));
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBusinessException(BusinessException ex, HttpServletRequest request){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),  ex.getMessage(), "Internal Server Error", request.getRequestURI()));
+    }
+
     private ErrorResponseDTO buildErrorResponse(int status, String message, String error, String path){
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(LocalDateTime.now(), status, message, error, path);
-
-        return errorResponseDTO;
-
+        return new ErrorResponseDTO(LocalDateTime.now(), status, message, error, path);
     }
 
 }

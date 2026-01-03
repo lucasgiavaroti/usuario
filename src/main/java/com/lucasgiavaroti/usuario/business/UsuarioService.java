@@ -70,8 +70,8 @@ public class UsuarioService {
     }
 
     public void deletarUsuarioPorEmail(String email){
-        usuarioRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com esse e-mail"));
-        usuarioRepository.deleteByEmail(email);
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Usuário não encontrado com esse e-mail"));
+        usuarioRepository.delete(usuario);
     }
 
     public UsuarioRecordDTO atualizaDadosUsuario(String token, UsuarioRecordDTO dto){

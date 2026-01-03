@@ -3,18 +3,13 @@ package com.lucasgiavaroti.usuario.controller;
 import com.lucasgiavaroti.usuario.business.UsuarioService;
 import com.lucasgiavaroti.usuario.business.ViaCepService;
 import com.lucasgiavaroti.usuario.business.dto.*;
-import com.lucasgiavaroti.usuario.infrastructure.security.JwtUtil;
 import com.lucasgiavaroti.usuario.infrastructure.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

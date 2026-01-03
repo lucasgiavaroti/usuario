@@ -3,6 +3,8 @@ package com.lucasgiavaroti.usuario.infrastructure.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,7 +12,9 @@ import lombok.*;
 @Entity
 @Table(name = "endereco")
 @Builder
-public class Endereco {
+public class Endereco implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +42,6 @@ public class Endereco {
     private String cep;
 
     @Column(name = "id_usuario")
-    private Long usuario_id;
+    private Long usuarioId;
 
 }
