@@ -56,7 +56,9 @@ public class UsuarioService {
                     new UsernamePasswordAuthenticationToken(dto.email(), dto.senha())
             );
 
-            return usuarioConverter.toLoginRecordDTO(authentication);
+            String token = jwtUtil.generateToken(authentication.getName());
+
+            return usuarioConverter.toLoginRecordDTO(token);
         }catch (BadCredentialsException | UsernameNotFoundException | AuthorizationDeniedException ex){
             throw new UnauthorizedException("Credenciais incorretas. Usuário ou senha inválidos: ", ex.getCause());
         }

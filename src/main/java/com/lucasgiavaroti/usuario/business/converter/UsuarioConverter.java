@@ -25,8 +25,8 @@ public class UsuarioConverter {
                 .build();
     }
 
-    public LoginRecordDTO toLoginRecordDTO(Authentication authentication){
-        return new LoginRecordDTO((String) authentication.getPrincipal());
+    public LoginRecordDTO toLoginRecordDTO(String token){
+        return new LoginRecordDTO(token);
     }
 
     public List<Endereco> toListaEndereco(List<EnderecoRecordDTO> dto){
