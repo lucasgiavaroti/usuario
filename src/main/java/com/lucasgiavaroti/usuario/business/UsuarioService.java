@@ -2,6 +2,7 @@ package com.lucasgiavaroti.usuario.business;
 
 import com.lucasgiavaroti.usuario.business.converter.UsuarioConverter;
 import com.lucasgiavaroti.usuario.business.dto.EnderecoRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.LoginRecordDTO;
 import com.lucasgiavaroti.usuario.business.dto.TelefoneRecordDTO;
 import com.lucasgiavaroti.usuario.business.dto.UsuarioRecordDTO;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Endereco;
@@ -9,11 +10,18 @@ import com.lucasgiavaroti.usuario.infrastructure.entity.Telefone;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Usuario;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.ConflictException;
 import com.lucasgiavaroti.usuario.infrastructure.exceptions.NotFoundException;
+import com.lucasgiavaroti.usuario.infrastructure.exceptions.UnauthorizedException;
 import com.lucasgiavaroti.usuario.infrastructure.repository.EnderecoRepository;
 import com.lucasgiavaroti.usuario.infrastructure.repository.TelefoneRepository;
 import com.lucasgiavaroti.usuario.infrastructure.repository.UsuarioRepository;
 import com.lucasgiavaroti.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +37,7 @@ public class UsuarioService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     public UsuarioRecordDTO salvaUsuario(UsuarioRecordDTO dto){
@@ -38,6 +47,20 @@ public class UsuarioService {
 
         Usuario usuarioSaved = usuarioConverter.toUsuario(usuarioRecord);
         return usuarioConverter.toUsuarioRecordDTO( usuarioRepository.save(usuarioSaved));
+    }
+
+    public LoginRecordDTO efetuarLogin(UsuarioRecordDTO dto){
+
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.email(), dto.senha())
+            );
+
+            return usuarioConverter.toLoginRecordDTO(authentication);
+        }catch (BadCredentialsException | UsernameNotFoundException | AuthorizationDeniedException ex){
+            throw new UnauthorizedException("Credenciais incorretas. Usuário ou senha inválidos: ", ex.getCause());
+        }
+
     }
 
     public UsuarioRecordDTO buscaUsuarioPorEmail(String email){

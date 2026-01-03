@@ -1,11 +1,13 @@
 package com.lucasgiavaroti.usuario.business.converter;
 
 import com.lucasgiavaroti.usuario.business.dto.EnderecoRecordDTO;
+import com.lucasgiavaroti.usuario.business.dto.LoginRecordDTO;
 import com.lucasgiavaroti.usuario.business.dto.TelefoneRecordDTO;
 import com.lucasgiavaroti.usuario.business.dto.UsuarioRecordDTO;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Endereco;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Telefone;
 import com.lucasgiavaroti.usuario.infrastructure.entity.Usuario;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +23,10 @@ public class UsuarioConverter {
                 .enderecos(toListaEndereco(dto.endereco()))
                 .telefones(toListaTelefone(dto.telefone()))
                 .build();
+    }
+
+    public LoginRecordDTO toLoginRecordDTO(Authentication authentication){
+        return new LoginRecordDTO((String) authentication.getPrincipal());
     }
 
     public List<Endereco> toListaEndereco(List<EnderecoRecordDTO> dto){
