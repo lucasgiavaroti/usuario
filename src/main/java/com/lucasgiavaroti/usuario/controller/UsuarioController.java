@@ -26,9 +26,6 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final ViaCepService viaCepService;
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-
     @PostMapping
     @Operation(summary = "Salvar usuários",description = "Cria uma novo usuário no sistema")
     @ApiResponse(responseCode = "200", description = "Usuário salvo com sucesso")
@@ -44,13 +41,7 @@ public class UsuarioController {
     @ApiResponse(responseCode = "401", description = "Credenciais incorretas")
     @ApiResponse(responseCode = "500", description = "Erro interno de servidor")
     public ResponseEntity<LoginRecordDTO> login (@RequestBody UsuarioRecordDTO usuarioDTO) {
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioDTO.email(), usuarioDTO.senha())
-        );
-
-        return  ResponseEntity.ok(new LoginRecordDTO("Bearer " + jwtUtil.generateToken(authentication.getName())));
-
+        return ResponseEntity.ok(usuarioService.efetuarLogin(usuarioDTO));
     }
 
     @GetMapping
